@@ -1,60 +1,46 @@
 ---
 title: Calendar
 description: A date field component that allows users to enter and edit date.
-source: apps/www/src/lib/registry/default/ui/calendar 
-primitive: https://vcalendar.io/
+source: apps/www/src/lib/registry/default/ui/calendar
+primitive: https://www.radix-vue.com/components/calendar.html
 ---
 
+<ComponentPreview name="CalendarDemo" />
 
-<ComponentPreview name="CalendarDemo"  /> 
+<Callout class="text-base mt-12">
+
+If you're looking for **previous** Calendar implementation, checkout to <span class="font-bold underline">[VCalendar](/docs/components/v-calendar)</span> component
+
+</Callout>
 
 ## About
 
-The `Calendar` component is built on top of [VCalendar](https://vcalendar.io/getting-started/installation.html).
+The `<Calendar />` component is built on top of the [RadixVue Calendar](https://www.radix-vue.com/components/calendar.html) component, which uses the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) package to handle dates.
+
+If you're looking for a range calendar, check out the [Range Calendar](/docs/components/range-calendar) component.
 
 ## Installation
-
-<TabPreview name="CLI">
-<template #CLI>
 
 ```bash
 npx shadcn-vue@latest add calendar
 ```
-</template>
+::: tip
+The component depends on the [@internationalized/date](https://react-spectrum.adobe.com/internationalized/date/index.html) package, which solves a lot of the problems that come with working with dates and times in JavaScript.
+Check [Dates & Times in Radix Vue](https://www.radix-vue.com/guides/dates.html) for more information and installation instructions.
+:::
 
-<template #Manual>
+## Datepicker
 
-<Steps>
+You can use the `<Calendar />` component to build a date picker. See the [Date Picker](/docs/components/date-picker) page for more information.
 
-### Install the following dependency
+## Examples
 
-```bash
-npm install v-calendar
-```
+### Form
 
-### Copy and paste the following code into your project
+<ComponentPreview name="CalendarForm" />
 
+## Advanced Customization
 
-<<< @/lib/registry/default/ui/calendar/Calendar.vue
+### Month & Year Selects
 
-
-</Steps>
-
-
-</template>
-</TabPreview>
-
-## Usage
-
-```vue
-<script setup lang="ts">
-import { Calendar } from '@/components/ui/calendar'
-</script>
-
-<template>
-  <Calendar />
-</template>
-```
-
-See the [VCalendar](https://vcalendar.io/getting-started/installation.html) documentation for more information.
-
+<ComponentPreview name="CalendarWithSelect" />

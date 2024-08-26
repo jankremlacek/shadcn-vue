@@ -1,5 +1,12 @@
 <script setup lang='ts'>
-import { Card, CardContent, CardHeader, CardTitle } from '@/lib/registry/default/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/lib/registry/default/ui/card'
 import {
   Select,
   SelectContent,
@@ -33,7 +40,7 @@ import { Button } from '@/lib/registry/default/ui/button'
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectItem value="nuxt">
-                  Nuxt.js
+                  Nuxt
                 </SelectItem>
                 <SelectItem value="next">
                   Next.js

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { HoverCardRoot, type HoverCardRootProps, useForwardProps } from 'radix-vue'
+import { HoverCardRoot, type HoverCardRootEmits, type HoverCardRootProps, useForwardPropsEmits } from 'radix-vue'
 
 const props = defineProps<HoverCardRootProps>()
-const forwarded = useForwardProps(props)
+const emits = defineEmits<HoverCardRootEmits>()
+
+const forwarded = useForwardPropsEmits(props, emits)
 </script>
 
 <template>

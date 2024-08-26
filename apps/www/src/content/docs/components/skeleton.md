@@ -1,9 +1,9 @@
 ---
 title: Skeleton
-description: Use to show a placeholder while content is loading. 
+description: Use to show a placeholder while content is loading.
 ---
 
-<ComponentPreview name="SkeletonDemo" /> 
+<ComponentPreview name="SkeletonDemo" />
 
 ## Installation
 
@@ -21,7 +21,6 @@ npx shadcn-vue@latest add skeleton
 
 ### Copy and paste the following code into your project
 
-
 <<< @/lib/registry/default/ui/skeleton/Skeleton.vue
 
 </Steps>
@@ -37,6 +36,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 </script>
 
 <template>
-  <Skeleton class="w-[100px] h-[20px] rounded-full" />
+  <Skeleton class="w-[100px] h-5 rounded-full" />
 </template>
 ```
+
+## Examples
+
+### Card
+
+<ComponentPreview name="SkeletonCard" />

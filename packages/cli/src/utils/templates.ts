@@ -1,6 +1,5 @@
 export const UTILS = `import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { camelize, getCurrentInstance, toHandlerKey } from 'vue'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -18,6 +17,7 @@ module.exports = {
     './app/**/*.{<%- extension %>,<%- extension %>x,vue}',
     './src/**/*.{<%- extension %>,<%- extension %>x,vue}',
 	],
+  prefix: "<%- prefix %>",
   theme: {
     container: {
       center: true,
@@ -51,6 +51,8 @@ export const TAILWIND_CONFIG_WITH_VARIABLES = `const animate = require("tailwind
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
+  safelist: ["dark"],
+  prefix: "<%- prefix %>",
   <% if (framework === 'vite') { %>
   content: [
     './pages/**/*.{<%- extension %>,<%- extension %>x,vue}',
@@ -115,6 +117,7 @@ module.exports = {
         },
       },
       borderRadius: {
+      	xl: "calc(var(--radius) + 4px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

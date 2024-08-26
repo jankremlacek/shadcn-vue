@@ -1,17 +1,16 @@
-import { existsSync, promises as fs } from 'node:fs'
-import path from 'node:path'
+import { existsSync, promises as fs, rmSync } from 'node:fs'
 import process from 'node:process'
-import chalk from 'chalk'
+import path from 'pathe'
+import { consola } from 'consola'
+import { colors } from 'consola/utils'
 import { Command } from 'commander'
-import { execa } from 'execa'
 import ora from 'ora'
 import prompts from 'prompts'
-import * as z from 'zod'
+import { z } from 'zod'
+import { addDependency, addDevDependency } from 'nypm'
 import { transform } from '@/src/utils/transformers'
 import { getConfig } from '@/src/utils/get-config'
-import { getPackageManager } from '@/src/utils/get-package-manager'
 import { handleError } from '@/src/utils/handle-error'
-import { logger } from '@/src/utils/logger'
 import {
   fetchTree,
   getItemTargetPath,
@@ -52,15 +51,15 @@ export const add = new Command()
       const cwd = path.resolve(options.cwd)
 
       if (!existsSync(cwd)) {
-        logger.error(`The path ${cwd} does not exist. Please try again.`)
+        consola.error(`The path ${cwd} does not exist. Please try again.`)
         process.exit(1)
       }
 
       const config = await getConfig(cwd)
+
       if (!config) {
-        logger.warn(
-          `Configuration is missing. Please run ${chalk.green('init')} to create a components.json file.`,
-        )
+        consola.warn(`Configuration is missing. Please run ${colors.green('init')} to create a components.json file.`)
+
         process.exit(1)
       }
 
@@ -88,7 +87,7 @@ export const add = new Command()
       }
 
       if (!selectedComponents?.length) {
-        logger.warn('No components selected. Exiting.')
+        consola.warn('No components selected. Exiting.')
         process.exit(0)
       }
 
@@ -97,7 +96,7 @@ export const add = new Command()
       const baseColor = await getRegistryBaseColor(config.tailwind.baseColor)
 
       if (!payload.length) {
-        logger.warn('Selected components not found. Exiting.')
+        consola.warn('Selected components not found. Exiting.')
         process.exit(0)
       }
 
@@ -114,7 +113,6 @@ export const add = new Command()
       }
 
       const spinner = ora('Installing components...').start()
-      const skippedDeps = new Set<string>()
       for (const item of payload) {
         spinner.text = `Installing ${item.name}...`
         const targetDir = getItemTargetPath(
@@ -144,8 +142,8 @@ export const add = new Command()
             })
 
             if (!overwrite) {
-              logger.info(
-                `Skipped ${item.name}. To overwrite, run with the ${chalk.green(
+              consola.info(
+                `Skipped ${item.name}. To overwrite, run with the ${colors.green(
                   '--overwrite',
                 )} flag.`,
               )
@@ -159,48 +157,61 @@ export const add = new Command()
           }
         }
 
-        for (const file of item.files) {
-          const componentDir = path.resolve(targetDir, item.name)
-          let filePath = path.resolve(
+        // Install dependencies.
+        await Promise.allSettled(
+          [
+            item.dependencies?.length && await addDependency(item.dependencies, {
+              cwd,
+              silent: true,
+            }),
+            item.devDependencies?.length && await addDevDependency(item.devDependencies, {
+              cwd,
+              silent: true,
+            }),
+          ],
+        )
+
+        const componentDir = path.resolve(targetDir, item.name)
+        if (!existsSync(componentDir))
+          await fs.mkdir(componentDir, { recursive: true })
+
+        const files = item.files.map(file => ({
+          ...file,
+          path: path.resolve(
             targetDir,
             item.name,
             file.name,
-          )
+          ),
+        }))
 
-          if (!config.typescript)
-            filePath = filePath.replace(/\.ts$/, '.js')
+        // We need to write original files to disk if we're not using TypeScript.
+        // Rewrite or delete added files after transformed
+        if (!config.typescript) {
+          for (const file of files)
+            await fs.writeFile(file.path, file.content)
+        }
 
-          if (!existsSync(componentDir))
-            await fs.mkdir(componentDir, { recursive: true })
-
+        for (const file of files) {
           // Run transformers.
           const content = await transform({
-            filename: file.name,
+            filename: file.path,
             raw: file.content,
             config,
             baseColor,
           })
 
+          let filePath = file.path
+
+          if (!config.typescript) {
+            // remove original .ts file if we're not using TypeScript.
+            if (file.path.endsWith('.ts')) {
+              if (existsSync(file.path))
+                rmSync(file.path)
+            }
+            filePath = file.path.replace(/\.ts$/, '.js')
+          }
+
           await fs.writeFile(filePath, content)
-        }
-
-        // Install dependencies.
-        if (item.dependencies?.length) {
-          item.dependencies.forEach(dep =>
-            skippedDeps.add(dep),
-          )
-
-          const packageManager = await getPackageManager(cwd)
-          await execa(
-            packageManager,
-            [
-              packageManager === 'npm' ? 'install' : 'add',
-              ...item.dependencies,
-            ],
-            {
-              cwd,
-            },
-          )
         }
       }
       spinner.succeed('Done.')

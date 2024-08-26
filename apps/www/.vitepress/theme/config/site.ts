@@ -15,6 +15,6 @@ export const siteConfig = {
 
 export const announcementConfig = {
   icon: '✨',
-  title: 'VSCode extension',
-  link: '/docs/installation.html#vscode-extension',
+  title: 'Extended: Auto Form, Charts',
+  link: '/docs/components/auto-form.html',
 }

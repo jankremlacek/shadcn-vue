@@ -41,7 +41,7 @@ const onSubmit = handleSubmit((values) => {
 <template>
   <div>
     <h3 class="text-lg font-medium">
-      Appearence
+      Appearance
     </h3>
     <p class="text-sm text-muted-foreground">
       Customize the appearance of the app. Automatically switch between day and night themes.
@@ -57,7 +57,7 @@ const onSubmit = handleSubmit((values) => {
             <select
               :class="cn(
                 buttonVariants({ variant: 'outline' }),
-                'w-[200px] appearance-none bg-transparent font-normal',
+                'w-[200px] appearance-none font-normal',
               )"
               v-bind="field"
             >
@@ -72,7 +72,7 @@ const onSubmit = handleSubmit((values) => {
               </option>
             </select>
           </FormControl>
-          <ChevronDownIcon class="absolute right-3 top-2.5 h-4 w-4 opacity-50" />
+          <ChevronDownIcon class="pointer-events-none absolute right-3 top-2.5 h-4 w-4 opacity-50" />
         </div>
         <FormDescription>
           Set the font you want to use in the dashboard.
@@ -101,7 +101,7 @@ const onSubmit = handleSubmit((values) => {
               <div class="items-center rounded-md border-2 border-muted p-1 hover:border-accent">
                 <div class="space-y-2 rounded-sm bg-[#ecedef] p-2">
                   <div class="space-y-2 rounded-md bg-white p-2 shadow-sm">
-                    <div class="h-2 w-[80px] rounded-lg bg-[#ecedef]" />
+                    <div class="h-2 w-20 rounded-lg bg-[#ecedef]" />
                     <div class="h-2 w-[100px] rounded-lg bg-[#ecedef]" />
                   </div>
                   <div class="flex items-center space-x-2 rounded-md bg-white p-2 shadow-sm">
@@ -127,7 +127,7 @@ const onSubmit = handleSubmit((values) => {
               <div class="items-center rounded-md border-2 border-muted bg-popover p-1 hover:bg-accent hover:text-accent-foreground">
                 <div class="space-y-2 rounded-sm bg-slate-950 p-2">
                   <div class="space-y-2 rounded-md bg-slate-800 p-2 shadow-sm">
-                    <div class="h-2 w-[80px] rounded-lg bg-slate-400" />
+                    <div class="h-2 w-20 rounded-lg bg-slate-400" />
                     <div class="h-2 w-[100px] rounded-lg bg-slate-400" />
                   </div>
                   <div class="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">

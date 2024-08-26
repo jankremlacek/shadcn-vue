@@ -3,8 +3,12 @@ import { defineConfig } from 'vitepress'
 import Icons from 'unplugin-icons/vite'
 import tailwind from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
+import { transformerMetaWordHighlight } from '@shikijs/transformers'
+import { cssVariables } from './theme/config/shiki'
+
 import { siteConfig } from './theme/config/site'
 import ComponentPreviewPlugin from './theme/plugins/previewer'
+import CodeWrapperPlugin from './theme/plugins/codewrapper'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -50,9 +54,13 @@ export default defineConfig({
 
   srcDir: path.resolve(__dirname, '../src'),
   markdown: {
-    theme: 'css-variables',
+    theme: cssVariables,
+    codeTransformers: [
+      transformerMetaWordHighlight(),
+    ],
     config(md) {
       md.use(ComponentPreviewPlugin)
+      md.use(CodeWrapperPlugin)
     },
   },
   rewrites: {
@@ -62,13 +70,13 @@ export default defineConfig({
     css: {
       postcss: {
         plugins: [
-          tailwind(),
+          tailwind() as any,
           autoprefixer(),
         ],
       },
     },
     plugins: [
-      Icons({ compiler: 'vue3', autoInstall: true }),
+      Icons({ compiler: 'vue3', autoInstall: true }) as any,
     ],
     resolve: {
       alias: {

@@ -9,6 +9,12 @@ description: Install and configure Nuxt.
 
 Start by creating a new Nuxt project using `create-nuxt-app`:
 
+<Callout>
+
+  If you're using the JS template, `jsconfig.json` must exist for the CLI to run without errors.
+
+</Callout>
+
 ```bash
 npx nuxi@latest init my-app
 ```
@@ -20,18 +26,145 @@ If you encounter the error `ERROR: Cannot read properties of undefined (reading 
 ```bash
 npm install -D typescript
 ```
+
 ### Install TailwindCSS module
 
 ```bash
-npm install -D @nuxtjs/tailwindcss
+npx nuxi@latest module add @nuxtjs/tailwindcss
 ```
 
-### Install `shadcn-nuxt` module (New ✨)
+### Add `Nuxt` module
+
+<br>
+
+<TabsMarkdown>
+  <TabMarkdown title="shadcn-nuxt">
+
+  Install the package below.
+
+  ```bash
+ npx nuxi@latest module add shadcn-nuxt
+  ```
+
+  </TabMarkdown>
+
+  <TabMarkdown title="manual">
+
+  Add the following code to `modules/shadcn.ts`.
 
 ```bash
-npm install -D shadcn-nuxt
+import {
+  defineNuxtModule,
+  addComponent,
+  addComponentsDir,
+  tryResolveModule,
+} from 'nuxt/kit';
+
+export interface ShadcnVueOptions {
+  /**
+   * Prefix for all the imported component
+   */
+  prefix: string;
+
+  /**
+   * Directory that the component lives in.
+   * @default "~/components/ui"
+   */
+  componentDir: string;
+}
+
+export default defineNuxtModule<ShadcnVueOptions>({
+  defaults: {
+    prefix: 'Ui',
+    componentDir: '~/components/ui',
+  },
+  meta: {
+    name: 'ShadcnVue',
+    configKey: 'shadcn',
+    version: '0.0.1',
+    compatibility: {
+      nuxt: '>=3.9.0',
+      bridge: false,
+    },
+  },
+  async setup({ componentDir, prefix }) {
+    const veeValidate = await tryResolveModule('vee-validate');
+    const vaulVue = await tryResolveModule('vaul-vue');
+
+    addComponentsDir(
+      {
+        path: componentDir,
+        extensions: ['.vue'],
+        prefix,
+        pathPrefix: false,
+      },
+      {
+        prepend: true,
+      }
+    );
+
+    if (veeValidate !== undefined) {
+      addComponent({
+        filePath: 'vee-validate',
+        export: 'Form',
+        name: `${prefix}Form`,
+        priority: 999,
+      });
+
+      addComponent({
+        filePath: 'vee-validate',
+        export: 'Field',
+        name: `${prefix}FormField`,
+        priority: 999,
+      });
+    }
+
+    if(vaulVue !== undefined) {
+      ['DrawerPortal', 'DrawerTrigger', 'DrawerClose'].forEach((item) => {
+        addComponent({
+          filePath: 'vaul-vue',
+          export: item,
+          name: prefix + item,
+          priority: 999,
+        });
+      })
+    }
+
+    addComponent({
+      filePath: 'radix-vue',
+      export: 'PaginationRoot',
+      name: `${prefix}Pagination`,
+      priority: 999,
+    });
+
+    addComponent({
+      filePath: 'radix-vue',
+      export: 'PaginationList',
+      name: `${prefix}PaginationList`,
+      priority: 999,
+    });
+
+    addComponent({
+      filePath: 'radix-vue',
+      export: 'PaginationListItem',
+      name: `${prefix}PaginationListItem`,
+      priority: 999,
+    });
+  },
+});
+
+declare module '@nuxt/schema' {
+  interface NuxtConfig {
+    shadcn?: ShadcnVueOptions;
+  }
+  interface NuxtOptions {
+    shadcn?: ShadcnVueOptions;
+  }
+}
 ```
 
+  </TabMarkdown>
+</TabsMarkdown>
 
 ### Configure `nuxt.config.ts`
 
@@ -64,16 +197,18 @@ npx shadcn-vue@latest init
 
 You will be asked a few questions to configure `components.json`:
 
-```txt showLineNumbers
+```txt:line-numbers
 Would you like to use TypeScript (recommended)? no / yes
 Which framework are you using? Vite / Nuxt / Laravel
 Which style would you like to use? › Default
 Which color would you like to use as base color? › Slate
+Where is your tsconfig.json or jsconfig.json file? › ./tsconfig.json
 Where is your global CSS file? › › src/index.css
 Do you want to use CSS variables for colors? › no / yes
 Where is your tailwind.config.js located? › tailwind.config.js
 Configure the import alias for components: › @/components
-Configure the import alias for utils: › @/lib/utils 
+Configure the import alias for utils: › @/lib/utils
+Write configuration to components.json. Proceed? > Y/n
 ```
 
 ### App structure
@@ -81,7 +216,7 @@ Configure the import alias for utils: › @/lib/utils
 Here's the default structure of Nuxt app. You can use this as a reference:
 
 ```txt {6-16,20-21}
-. 
+.
 ├── pages
 │   ├── index.vue
 │   └── dashboard.vue

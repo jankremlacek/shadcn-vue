@@ -1,7 +1,7 @@
 {
   "name": "shadcn-nuxt",
   "type": "module",
-  "version": "0.8.5",
+  "version": "0.10.5",
   "description": "Add shadcn-vue module to Nuxt",
   "publishConfig": {
     "access": "public"
@@ -35,17 +35,18 @@
     "release": "pnpm run prepack && pnpm publish && git push --follow-tags"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.8.2",
-    "ts-morph": "^19.0.0"
+    "@nuxt/kit": "^3.12.4",
+    "@oxc-parser/wasm": "catalog:",
+    "class-variance-authority": "^0.7.0",
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "@nuxt/eslint-config": "^0.2.0",
-    "@nuxt/module-builder": "^0.5.4",
-    "@nuxt/schema": "^3.8.2",
-    "@nuxt/test-utils": "^3.8.1",
-    "@types/node": "^20.9.3",
-    "nuxt": "^3.8.2",
-    "vitest": "^0.33.0"
+    "@nuxt/eslint-config": "^0.5.0",
+    "@nuxt/module-builder": "^0.8.2",
+    "@nuxt/schema": "^3.12.4",
+    "@nuxt/test-utils": "^3.14.0",
+    "@types/node": "^20.14.15",
+    "nuxt": "^3.12.4"
   }
 }

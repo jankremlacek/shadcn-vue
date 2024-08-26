@@ -14,7 +14,7 @@ import {
   useVueTable,
 } from '@tanstack/vue-table'
 import { h, ref } from 'vue'
-import { CaretSortIcon, ChevronDownIcon } from '@radix-icons/vue'
+import { ChevronDown, ChevronsUpDown } from 'lucide-vue-next'
 import DropdownAction from '../DataTableDemoColumn.vue'
 
 import { Button } from '@/lib/registry/default/ui/button'
@@ -81,7 +81,7 @@ const columns: ColumnDef<Payment>[] = [
   {
     id: 'select',
     header: ({ table }) => h(Checkbox, {
-      'checked': table.getIsAllPageRowsSelected(),
+      'checked': table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate'),
       'onUpdate:checked': value => table.toggleAllPageRowsSelected(!!value),
       'ariaLabel': 'Select all',
     }),
@@ -104,7 +104,7 @@ const columns: ColumnDef<Payment>[] = [
       return h(Button, {
         variant: 'ghost',
         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-      }, ['Email', h(CaretSortIcon, { class: 'ml-2 h-4 w-4' })])
+      }, ['Email', h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' })])
     },
     cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('email')),
   },
@@ -179,7 +179,7 @@ const table = useVueTable({
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <Button variant="outline" class="ml-auto">
-                Columns <ChevronDownIcon class="ml-2 h-4 w-4" />
+                Columns <ChevronDown class="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -221,7 +221,7 @@ const table = useVueTable({
 
               <TableRow v-else>
                 <TableCell
-                  :col-span="columns.length"
+                  :colspan="columns.length"
                   class="h-24 text-center"
                 >
                   No results.
